@@ -143,7 +143,7 @@ const MENU = [
     ],
     c: 'Burgers de pan de papa',
     e: '🍔',
-    img: 'burgerRoquefort.jpeg'
+    img: 'BurgerRoquefort.jpeg'
   },
   {
     id: 'burger-big-frayle',
