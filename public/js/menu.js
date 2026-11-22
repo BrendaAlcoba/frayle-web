@@ -29,13 +29,13 @@ const MENU = [
   { id: 'promo-3', n: 'Promo 3', d: '2 burgers de campo + porción de papas.', p: 22000, c: 'Promos', e: '', img: '' },
   { id: 'promo-4', n: 'Promo 4', d: '2 burgers completas + porción de papas.', p: 26000, c: 'Promos', e: '', img: '' },
   { id: 'promo-5', n: 'Promo 5', d: '2 súper chori + porción de papas.', p: 17000, c: 'Promos', e: '', img: '' },
-  { id: 'promo-6', n: 'Promo 6', d: '1 pizza mozzarela + porción de papas.', p: 16000, c: 'Promos', e: '', img: '' },
+  { id: 'promo-6', n: 'Promo 6', d: '1 pizza mozzarella + porción de papas.', p: 16000, c: 'Promos', e: '', img: '' },
   { id: 'promo-7', n: 'Promo 7', d: '1 pizza especial + porción de papas.', p: 22000, c: 'Promos', e: '', img: '' },
-  { id: 'promo-8', n: 'Promo 8', d: '2 pizzas mozzarela + porción de papas.', p: 27000, c: 'Promos', e: '', img: '' },
-  { id: 'promo-9', n: 'Promo 9', d: '1 pizza mozzarela + 1 pizza especial + porción de papas.', p: 32000, c: 'Promos', e: '', img: '' },
+  { id: 'promo-8', n: 'Promo 8', d: '2 pizzas mozzarella + porción de papas.', p: 27000, c: 'Promos', e: '', img: '' },
+  { id: 'promo-9', n: 'Promo 9', d: '1 pizza mozzarella + 1 pizza especial + porción de papas.', p: 32000, c: 'Promos', e: '', img: '' },
   { id: 'promo-10', n: 'Promo 10', d: '2 pizzas especiales + porción de papas.', p: 35000, c: 'Promos', e: '', img: '' },
   { id: 'promo-mini-lomo-papas', n: 'Mini lomo + porción de papas', d: 'Mini lomo + porción de papas.', p: 13000, c: 'Promos', e: '', img: '' },
-  { id: 'promo-2-pizzas-mozarella', n: '2 pizzas mozzarellas', d: '2 pizzas mozzarellas (8 porciones cada una).', p: 17000, c: 'Promos', e: '', img: '' },
+  { id: 'promo-2-pizzas-mozzarella', n: '2 pizzas mozzarellas', d: '2 pizzas mozzarellas (8 porciones cada una).', p: 17000, c: 'Promos', e: '', img: '' },
 
   // --- BURGERS DE PAN DE PAPA (con fotos) ---
   { id: 'burger-clasica', n: 'Burger clásica', d: 'Pan de papa, medallón de carne casero, tomate, lechuga y todos los aderezos.', p: 7000, c: 'Burgers de pan de papa', e: '🍔', img: 'burger-clasica.jpg' },
@@ -178,10 +178,6 @@ const MENU = [
   { id: 'combo-2-burgers-simples', n: '2 burgers simples (a elección)', d: '2 burgers simples en pan de papa, variedad a elección.', p: 18000, c: 'Burgers de pan de papa', e: '🍔', img: 'combo-2-burgers-simples.jpg' },
   { id: 'combo-2-burgers-dobles', n: '2 burgers dobles (a elección)', d: '2 burgers dobles en pan de papa, variedad a elección.', p: 23000, c: 'Burgers de pan de papa', e: '🍔', img: 'combo-2-burgers-dobles.jpg' },
 
-
-
-
-
   // --- HAMBURGUESAS (pan árabe o francés - solo texto) ---
   { id: 'hamb-campestre', n: 'Hamburguesa estilo campestre', d: 'Pan francés, hamburguesa de carne casera, tomate, lechuga y mayonesa.', p: 12000, c: 'Hamburguesas', e: '', img: '' },
   { id: 'hamb-completa', n: 'Hamburguesa completa', d: 'Pan árabe o francés, hamburguesa de carne casera, jamón, queso, huevo, tomate, lechuga, salsa de tomate y todos los condimentos.', p: 15000, c: 'Hamburguesas', e: '', img: '' },
@@ -191,7 +187,6 @@ const MENU = [
   { id: 'super-hamb-gratinada', n: 'Súper hamburguesa gratinada', d: 'Pan árabe gratinado con mozzarella, doble carne casera, jamón, queso, huevo, tomate, lechuga, salsa de tomate y todos los condimentos.', p: 30000, c: 'Hamburguesas', e: '', img: '' },
   { id: 'super-hamb-roquefort', n: 'Súper hamburguesa roquefort', d: 'Pan árabe o francés, doble hamburguesa de carne casera, queso roquefort, jamón, queso, huevo, tomate, lechuga, salsa de tomate y todos los condimentos.', p: 30000, c: 'Hamburguesas', e: '', img: '' },
   { id: 'super-hamb-pizza', n: 'Súper hamburguesa pizza (5 pers.)', d: 'Dos bases de pizzas caseras, una gratinada con mozzarella, doble hamburguesa de carne casera, jamón, queso, huevo, tomate, lechuga, salsa de tomate y todos los condimentos.', p: 45000, c: 'Hamburguesas', e: '', img: '' },
-
 
   // --- VIANDAS (con fotos) ---
   { id: 'vianda-arroz-con-pollo', n: 'Arroz con pollo', d: 'Vianda del día de arroz con pollo. Consultá disponibilidad y precio.', p: 0, c: 'Viandas', e: '🍚', img: 'ArrozConPollo.jpg' },
@@ -222,14 +217,14 @@ const MENU = [
     e: '🍝',
     img: 'Lasaña.jpg'
   },
-  { id: 'vianda-milanesa-con-guarnicion', n: 'Milanesa con guarnición', d: 'Milanesa de carne o pollo con guarnición (papas fritas, verduras asadas, puré de papas, pasta con pesto o ensalada mezclada).', p: 9500, c: 'Viandas', e: '🍽️', img: 'MilanesaConGuarnición.jpg' },
+  { id: 'vianda-milanesa-con-guarnicion', n: 'Milanesa con guarnición', d: 'Milanesa de carne o pollo con guarnición (papas fritas, verduras asadas, puré de papas, pasta con pesto o ensalada mezclada).', p: 9500, c: 'Viandas', e: '🍽️', img: 'MilanesaConGuarnición.jpg', tipoMilanesa: true, conGuarnicion: true },
   { id: 'vianda-noquis', n: 'Ñoquis', d: 'Vianda de ñoquis caseros.', p: 8000, c: 'Viandas', e: '🍝', img: 'ñoquis.jpg' },
   { id: 'vianda-pan-de-carne', n: 'Pan de carne', d: 'Vianda de pan de carne. Consultá disponibilidad y precio.', p: 0, c: 'Viandas', e: '🍖', img: 'PanDeCarne.jpg' },
   { id: 'vianda-sorrentinos', n: 'Sorrentinos', d: 'Sorrentinos J/Q (pasta rellena x8 unidades).', p: 9000, c: 'Viandas', e: '🍝', img: 'sorrentinos.jpg' },
   {
     id: 'vianda-tallarines',
-    n: 'Tallarines',
-    d: 'Vianda de tallarines caseros.',
+    n: 'Tagliatelle (fettuccine)',
+    d: 'Vianda de tagliatelle (fettuccine).',
     p: 6000,
     variantes: [
       { label: 'Normal', p: 6000 },
@@ -242,6 +237,24 @@ const MENU = [
   { id: 'vianda-pastel-de-papa', n: 'Pastel de papa', d: 'Vianda de pastel de papa. Consultá disponibilidad y precio.', p: 0, c: 'Viandas', e: '🍝', img: 'PastelDePapa.jpeg' },
   { id: 'vianda-pata-muslo', n: 'Pata muslo', d: 'Vianda de pata muslo. Consultá disponibilidad y precio.', p: 0, c: 'Viandas', e: '🍗', img: 'PataMuslo.jpg' },
   { id: 'vianda-ravioles', n: 'Ravioles', d: 'Vianda de ravioles caseros.', p: 8500, c: 'Viandas', e: '🍝', img: 'Ravioles.jpg' },
+
+  // --- milanesas, tartas, minutas y ensaladas ---
+  // Sin foto por ahora: al subir public/img/viandas/<id>.jpg aparece sola.
+  { id: 'vianda-milanesa-huevo-frito', n: 'Milanesa con huevo frito y guarnición', d: 'Milanesa de carne o pollo con huevo frito y guarnición (papas fritas, verduras asadas, puré de papas, pasta con pesto o ensalada mezclada).', p: 10000, c: 'Viandas', e: '', img: '', tipoMilanesa: true, conGuarnicion: true },
+  { id: 'vianda-milanesa-napolitana', n: 'Milanesa napolitana con guarnición', d: 'Milanesa de carne o pollo estilo napolitana con guarnición (papas fritas, verduras asadas, puré de papas, pasta con pesto o ensalada mezclada).', p: 11500, c: 'Viandas', e: '', img: '', tipoMilanesa: true, conGuarnicion: true },
+  { id: 'vianda-milanesa-napolitana-huevo-frito', n: 'Milanesa napolitana con huevo frito y guarnición', d: 'Milanesa de carne o pollo estilo napolitana con huevo frito y guarnición (papas fritas, verduras asadas, puré de papas, pasta con pesto o ensalada mezclada).', p: 12000, c: 'Viandas', e: '', img: '', tipoMilanesa: true, conGuarnicion: true },
+  { id: 'vianda-tarta-acelga', n: 'Tarta de acelga', d: 'Acelga mezclada con carne molida y verduras, pollo, mozzarella y huevo. Viene con ensalada mixta.', p: 6000, c: 'Viandas', e: '', img: '' },
+  { id: 'vianda-tarta-jamon-queso', n: 'Tarta de jamón y queso', d: 'Tarta de jamón y queso. Viene con ensalada mixta.', p: 8000, c: 'Viandas', e: '', img: '' },
+  { id: 'vianda-suprema-pollo-grille', n: 'Suprema de pollo grille con guarnición', d: 'Suprema de pollo grille con guarnición (papas fritas, verduras asadas, puré de papas, pasta con pesto o ensalada mezclada).', p: 8000, c: 'Viandas', e: '', img: '', conGuarnicion: true },
+  { id: 'vianda-hamb-napolitana-simple', n: 'Hamburguesa napolitana simple con guarnición', d: 'Hamburguesa napolitana simple con guarnición (papas fritas, verduras asadas, puré de papas, pasta con pesto o ensalada mezclada).', p: 6000, c: 'Viandas', e: '', img: '', conGuarnicion: true },
+  { id: 'vianda-hamb-napolitana-doble', n: 'Hamburguesa napolitana doble con guarnición', d: 'Hamburguesa napolitana doble con guarnición (papas fritas, verduras asadas, puré de papas, pasta con pesto o ensalada mezclada).', p: 8000, c: 'Viandas', e: '', img: '', conGuarnicion: true },
+  { id: 'vianda-filete-merluza-limon', n: 'Filete de merluza al limón', d: 'Minuta.', p: 9000, c: 'Viandas', e: '', img: '' },
+  { id: 'vianda-sandwich-milanesa', n: 'Sándwich de milanesa', d: 'Minuta.', p: 8000, c: 'Viandas', e: '', img: '' },
+  { id: 'vianda-arroz-con-atun', n: 'Arroz con atún', d: 'Arroz blanco, atún, maíz, guisantes, tomate y huevo.', p: 7000, c: 'Viandas', e: '', img: '' },
+  { id: 'vianda-arma-tu-ensalada', n: 'Armá tu ensalada', d: 'Incluye hasta 6 ingredientes a elección: lentejas, porotos, lechuga, tomate, choclo, habas, brócoli, rúcula, palta, tomate cherry, chauchas, zanahoria, repollo de bruselas, huevo, jamón, queso barra y mozzarella.', p: 5000, c: 'Viandas', e: '', img: '' },
+  { id: 'vianda-adicional-pollo', n: 'Adicional: pollo grillé', d: 'Para sumar a tu ensalada.', p: 3000, c: 'Viandas', e: '', img: '' },
+  { id: 'vianda-adicional-atun', n: 'Adicional: atún', d: 'Para sumar a tu ensalada.', p: 3000, c: 'Viandas', e: '', img: '' },
+  { id: 'vianda-adicional-bife-lomo', n: 'Adicional: bife de lomo', d: 'Para sumar a tu ensalada.', p: 5000, c: 'Viandas', e: '', img: '' },
 
   // --- LOMOS (solo texto) ---
   { id: 'mini-lomo-completo', n: 'Mini lomo completo', d: 'Lomo completo en formato mini.', p: 13000, c: 'Lomos', e: '', img: '' },
@@ -258,7 +271,7 @@ const MENU = [
   { id: 'super-lomo-pizza', n: 'Súper pizza lomo (5 pers.)', d: 'Dos masas precocidas estilo casero cubiertas y gratinadas con mozzarella, lomo de res marmolado, jamón, queso, huevo, tomate, lechuga, salsa de tomate y todos los condimentos.', p: 60000, c: 'Lomos', e: '', img: '' },
 
   // --- PIZZAS (solo texto) ---
-  { id: 'pizza-mozarella', n: 'Mozarella', d: 'Masa precocida casera, salsa de tomate sazonada, queso mozzarella, orégano y aceitunas.', p: 11000, c: 'Pizzas', e: '', img: '' },
+  { id: 'pizza-mozarella', n: 'Mozzarella', d: 'Masa precocida casera, salsa de tomate sazonada, queso mozzarella, orégano y aceitunas.', p: 11000, c: 'Pizzas', e: '', img: '' },
   { id: 'pizza-doble-mozarella', n: 'Doble mozzarella', d: 'Masa precocida casera, salsa de tomate sazonada, queso mozzarella, orégano y aceitunas.', p: 17000, c: 'Pizzas', e: '', img: '' },
   { id: 'pizza-especial', n: 'Especial', d: 'Masa precocida casera, salsa de tomate sazonada, queso mozzarella, jamón cocido, pimiento morrón y aceitunas.', p: 16000, c: 'Pizzas', e: '', img: '' },
   { id: 'pizza-doble-especial', n: 'Doble especial', d: 'Masa precocida casera, salsa de tomate sazonada, queso mozzarella, jamón cocido, pimiento morrón y aceitunas.', p: 22000, c: 'Pizzas', e: '', img: '' },

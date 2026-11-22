@@ -706,3 +706,10 @@ nav a:hover{color:var(--crema)}
 .stepper-prod button{width:34px;height:34px;border:0;border-radius:50%;background:rgba(255,255,255,.18);color:#fff;font-size:1.25rem;line-height:1;cursor:pointer;transition:background .15s}
 .stepper-prod button:hover{background:rgba(255,255,255,.32)}
 .stepper-n{min-width:30px;text-align:center;font-weight:700;font-size:1.05rem}
+/* Al refrescar dentro del menú, no se muestra el inicio mientras carga */
+.abrir-menu main > section:not(#catalogoCompleto),
+.abrir-menu main > .marquesina{display:none!important}
+
+/* Ingredientes que se eligen con tilde (Armá tu ensalada) */
+.opcion-check{padding-right:12px;color:var(--oro);font-weight:700}
+.opcion-nombre[aria-pressed="true"]{color:var(--oro);font-weight:700}

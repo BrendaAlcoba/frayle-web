@@ -7,6 +7,7 @@
   <meta name="description" content="Viandas y comidas rápidas, desde 2014 en Fray Luis Beltrán. Armá tu pedido y envialo por WhatsApp.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍔</text></svg>">
   <script>document.documentElement.classList.add('js')</script>
+  <script>if (location.hash.indexOf('#menu-completo') === 0) document.documentElement.classList.add('abrir-menu')</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Anton&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/styles.css">
@@ -30,7 +31,7 @@
   <main>
     <section class="hero">
       <div class="wrap hero-centro">
-        <p class="etiqueta">Viandas y comidas rápidas · Fray Luis Beltrán</p>
+        <p class="etiqueta">Viandas y comidas rápidas</p>
 
         <div class="hero-logo-animado">
           <!-- Hamburguesa dorada dibujada -->
@@ -177,8 +178,16 @@
         <div class="donde reveal">
           <dl class="datos">
             <div><dt>Dirección</dt><dd>Rivadavia 697 esq. Mitre<br>Fray Luis Beltrán, Mendoza</dd></div>
-            <div><dt>Teléfono</dt><dd><a href="tel:+542616173390">261 617 3390</a><br><small>Tocá el número para llamar</small></dd></div>
-            <div><dt>Horarios</dt><dd>Consultanos por WhatsApp</dd></div>
+            <div><dt>Teléfono</dt><dd><a href="tel:+542616173390">261 617 3390</a><br><small></small></dd></div>
+            <div>
+              <dt>Horarios</dt>
+              <dd>
+                <strong>Martes a viernes:</strong> 10:00 - 15:00 y 20:00 - 23:59<br>
+                <strong>Sábado:</strong> 11:00 - 15:00 y 20:00 - 23:59<br>
+                <strong>Domingo:</strong> 20:00 - 23:59<br>
+                <strong>Lunes:</strong> Cerrado
+              </dd>
+            </div>
           </dl>
           <div class="mapa">
             <iframe title="Mapa de Frayle Sandwichs" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
@@ -296,6 +305,6 @@
       <button class="btn btn-rojo btn-block" id="confirmarCombo" type="button" disabled>Elegí 2 variedades</button>
     </div>
   </div>
-  
+
 </body>
 </html>

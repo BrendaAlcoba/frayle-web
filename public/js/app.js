@@ -14,6 +14,14 @@ const $ = (id) => document.getElementById(id)
 
 // (Los datos del menú están en menu.js: FONDOS_CAT y MENU. SIN_FOTO ya no se usa)
 
+// ====== El menú como "página propia": la dirección guarda dónde estás ======
+// #menu-completo  o  #menu-completo/lomos  (si refrescás, vuelve al mismo lugar)
+const HASH_MENU = '#menu-completo'
+const hashEsMenu = () => location.hash.startsWith(HASH_MENU)
+const slug = (s) =>
+  String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+
 // ====== Fotos: carpetas dentro de public/img ======
 // Cada categoría tiene su carpeta. Si agregás una categoría nueva, sumá su carpeta acá.
 const CARPETAS = {
@@ -49,12 +57,72 @@ const CATS_CON_ACLARACION = new Set([
 ])
 const ACLARACIONES_RAPIDAS = ['Sin tomate', 'Sin lechuga', 'Sin cebolla', 'Sin condimentos']
 
-// ====== Combos "a elección": el cliente elige burgers en una ventana ======
-// cantidad = cuántas burgers se eligen; incluir = ids extra que se ofrecen en la lista
-// (la lista toma todas las burgers que tienen tamaños: simple/doble/triple/cuádruple)
+// ====== Productos "a elección": el cliente elige en una ventana ======
+// min / max = cuántas opciones puede elegir; repetir = si puede elegir la misma más de una vez
+const INGREDIENTES_ENSALADA = [
+  'Lentejas', 'Porotos', 'Lechuga', 'Tomate', 'Choclo', 'Habas', 'Brócoli', 'Rúcula', 'Palta',
+  'Tomate cherry', 'Chauchas', 'Zanahoria', 'Repollo de bruselas', 'Huevo', 'Jamón', 'Queso barra', 'Mozzarella'
+]
+
+const TIPOS_MILANESA = ['Carne', 'Pollo']
+
+const GUARNICIONES = [
+  'Papas fritas',
+  'Verduras asadas',
+  'Puré de papas',
+  'Pasta con pesto',
+  'Ensalada mezclada'
+]
+
+// La lista toma todas las burgers que tienen tamaños (simple/doble/triple/cuádruple) + las ids extra
+const burgersElegibles = (extra = []) =>
+  MENU
+    .filter((m) =>
+      m.c === 'Burgers de pan de papa' &&
+      ((Array.isArray(m.variantes) && m.variantes.length > 0) || extra.includes(m.id)))
+    .map((m) => ({ id: m.id, n: m.n }))
+
 const COMBOS = {
-  'combo-2-burgers-simples': { cantidad: 2, incluir: ['burger-clasica'] },
-  'combo-2-burgers-dobles': { cantidad: 2, incluir: [] }
+  'combo-2-burgers-simples': {
+    min: 2, max: 2, repetir: true, separador: ' + ', rotulo: 'Elegidas',
+    titulo: 'Elegí 2 burgers',
+    sub: 'Tocá las que quieras. Si querés dos iguales, tocá + en la misma.',
+    opciones: () => burgersElegibles(['burger-clasica'])
+  },
+  'combo-2-burgers-dobles': {
+    min: 2, max: 2, repetir: true, separador: ' + ', rotulo: 'Elegidas',
+    titulo: 'Elegí 2 burgers',
+    sub: 'Tocá las que quieras. Si querés dos iguales, tocá + en la misma.',
+    opciones: () => burgersElegibles([])
+  },
+  'vianda-arma-tu-ensalada': {
+    min: 1, max: 6, repetir: false, separador: ', ', rotulo: 'Elegidos',
+    titulo: 'Armá tu ensalada',
+    sub: 'Elegí hasta 6 ingredientes. Tocá para elegir o para sacar.',
+    opciones: () => INGREDIENTES_ENSALADA.map((n) => ({ id: n, n }))
+  }
+}
+
+const PASO_MILANESA = {
+  min: 1, max: 1, repetir: false, separador: ', ', rotulo: 'Elección',
+  titulo: 'Elegí de qué querés la milanesa',
+  sub: 'Seleccioná una opción (Carne o Pollo).',
+  opciones: () => TIPOS_MILANESA.map((n) => ({ id: n, n }))
+}
+
+const PASO_GUARNICION = {
+  min: 1, max: 1, repetir: false, separador: ', ', rotulo: 'Guarnición',
+  titulo: 'Elegí tu guarnición',
+  sub: 'Seleccioná una opción incluida con tu plato.',
+  opciones: () => GUARNICIONES.map((n) => ({ id: n, n }))
+}
+
+function obtenerPasosProducto(prod) {
+  if (COMBOS[prod.id]) return [COMBOS[prod.id]]
+  const pasos = []
+  if (prod.tipoMilanesa) pasos.push(PASO_MILANESA)
+  if (prod.conGuarnicion) pasos.push(PASO_GUARNICION)
+  return pasos.length ? pasos : null
 }
 
 // ====== Íconos de redes (SVG en código) ======
@@ -157,7 +225,7 @@ function pintarAcordeon() {
     const estiloBarra = fondoBarra ? ` style="--bg-cat:url('${esc(rutaFondo(fondoBarra))}')"` : ''
 
     return `
-      <details class="cat-acordeon">
+      <details class="cat-acordeon" data-slug="${slug(cat)}">
         <summary${estiloBarra}>
           <span class="cat-info">${esc(cat)} <span class="cat-cant">${productos.length}</span></span>
         </summary>
@@ -168,13 +236,24 @@ function pintarAcordeon() {
   }).join('')
 }
 
+// Guarda en la dirección qué categoría está abierta (sin sumar pasos al historial)
+function guardarHashMenu(slugCat) {
+  if (vistaCatalogo.hidden) return
+  history.replaceState(history.state, '', slugCat ? `${HASH_MENU}/${slugCat}` : HASH_MENU)
+}
+
 // Una sola categoría abierta a la vez, y se acomoda en pantalla
 acordeonLista.addEventListener('toggle', (e) => {
   const d = e.target
-  if (!(d instanceof HTMLDetailsElement) || !d.open) return
-  acordeonLista.querySelectorAll('details[open]').forEach((o) => { if (o !== d) o.open = false })
-  probarFotosDe(d)
-  requestAnimationFrame(() => d.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+  if (!(d instanceof HTMLDetailsElement)) return
+  if (d.open) {
+    acordeonLista.querySelectorAll('details[open]').forEach((o) => { if (o !== d) o.open = false })
+    probarFotosDe(d)
+    guardarHashMenu(d.dataset.slug)
+    requestAnimationFrame(() => d.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+  } else if (!acordeonLista.querySelector('details[open]')) {
+    guardarHashMenu('')
+  }
 }, true)
 
 function mostrarCatalogoUI() {
@@ -186,18 +265,22 @@ function mostrarCatalogoUI() {
 function mostrarInicioUI(irArriba = true) {
   vistaCatalogo.hidden = true
   seccionesInicio.forEach((el) => { el.hidden = false })
+  document.documentElement.classList.remove('abrir-menu')
   if (irArriba) window.scrollTo({ top: 0, behavior: 'auto' })
 }
 
 // El botón "atrás" del celular vuelve al inicio (en vez de salir de la página)
 function irACatalogo() {
   if (!vistaCatalogo.hidden) return
-  history.pushState({ v: 'catalogo' }, '')
+  history.pushState({ v: 'catalogo' }, '', HASH_MENU)
   mostrarCatalogoUI()
 }
 function volverAlInicio() {
   if (history.state && history.state.v === 'catalogo') history.back()
-  else mostrarInicioUI()
+  else {
+    history.replaceState(null, '', location.pathname + location.search)
+    mostrarInicioUI()
+  }
 }
 
 pintarAcordeon()
@@ -219,13 +302,14 @@ document.querySelectorAll('nav a[href^="#"]').forEach((a) => a.addEventListener(
   e.preventDefault()
   const destino = a.getAttribute('href')
   mostrarInicioUI(false)
+  history.replaceState(null, '', destino)
   setTimeout(() => document.querySelector(destino)?.scrollIntoView({ behavior: 'smooth' }), 60)
 }))
 
 // ====== Carrito ======
 // Cada línea: { lid, k, q, nota, detalle }
 // k = id del producto (o id__variante), nota = aclaración del cliente,
-// detalle = lo que eligió en un combo (por ejemplo "Burger J&Q + Burger Frayle")
+// detalle = lo que eligió en una ventana de elección (por ejemplo "Burger J&Q + Burger Frayle")
 const CLAVE = 'frayle-pedido-v2'
 let carro = []
 try {
@@ -334,7 +418,7 @@ function armarMensaje() {
   const nombre = $('pNombre').value.trim()
 
   const detalles = (l) => [
-    ...(l.detalle ? [`   ↳ Elegidas: ${l.detalle}`] : []),
+    ...(l.detalle ? [`   ↳ Elección: ${l.detalle}`] : []),
     ...(l.nota ? [`   ↳ Aclaración: ${l.nota}`] : [])
   ]
 
@@ -436,8 +520,8 @@ function pintarCarro(animar = false) {
   }
 }
 
-// ====== Ventana para elegir burgers de un combo ======
-let comboActual = null // { id, cantidad, opciones, elegidas: { idBurger: cantidad } }
+// ====== Ventana de elección (combos de burgers, ensalada a medida, milanesas y guarniciones) ======
+let comboActual = null // { id, pasos, pasoIdx, acumulados, cfg, opciones, elegidas: { idOpcion: cantidad } }
 
 const comboAbierto = () => {
   const m = $('modalCombo')
@@ -446,36 +530,47 @@ const comboAbierto = () => {
 const totalElegidas = () =>
   comboActual ? Object.values(comboActual.elegidas).reduce((s, n) => s + n, 0) : 0
 
-function opcionesCombo(comboId) {
-  const cfg = COMBOS[comboId]
-  return MENU
-    .filter((m) =>
-      m.c === 'Burgers de pan de papa' &&
-      ((Array.isArray(m.variantes) && m.variantes.length > 0) || cfg.incluir.includes(m.id)))
-    .map((m) => ({ id: m.id, n: m.n }))
+function detallePaso(cfg, opciones, elegidas) {
+  return opciones
+    .filter((o) => elegidas[o.id] > 0)
+    .map((o) => (elegidas[o.id] > 1 ? `${elegidas[o.id]} x ${o.n}` : o.n))
+    .join(cfg.separador)
 }
 
 function detalleCombo() {
   const c = comboActual
-  return c.opciones
-    .filter((o) => c.elegidas[o.id] > 0)
-    .map((o) => (c.elegidas[o.id] > 1 ? `${c.elegidas[o.id]} x ${o.n}` : o.n))
-    .join(' + ')
+  return detallePaso(c.cfg, c.opciones, c.elegidas)
 }
 
 function pintarCombo() {
   const c = comboActual
   if (!c) return
+  const cfg = c.cfg
   const total = totalElegidas()
-  const lleno = total >= c.cantidad
+  const lleno = total >= cfg.max
+  const completo = total >= cfg.min && total <= cfg.max
+  const hayMasPasos = c.pasoIdx < c.pasos.length - 1
+  const prefijoPaso = c.pasos.length > 1 ? `Paso ${c.pasoIdx + 1} de ${c.pasos.length} · ` : ''
 
-  $('comboTitulo').textContent = `Elegí ${c.cantidad} burgers`
-  $('comboSub').textContent = 'Tocá las que quieras. Si querés dos iguales, tocá + en la misma.'
-  $('comboContador').textContent = `Elegidas: ${total} de ${c.cantidad}`
-  $('comboResumen').textContent = total ? detalleCombo() : ''
+  $('comboTitulo').textContent = `${prefijoPaso}${cfg.titulo}`
+  $('comboSub').textContent = cfg.sub
+  $('comboContador').textContent = `${cfg.rotulo}: ${total} de ${cfg.max}`
+  const partesResumen = [...c.acumulados, ...(total ? [detalleCombo()] : [])]
+  $('comboResumen').textContent = partesResumen.join(' · ')
 
   $('comboLista').innerHTML = c.opciones.map((o) => {
     const n = c.elegidas[o.id] || 0
+
+    // Se elige o se saca con un toque (ingredientes, carne/pollo, guarnición)
+    if (!cfg.repetir) {
+      return `
+        <div class="opcion-burger${n > 0 ? ' activa' : ''}">
+          <button type="button" class="opcion-nombre" data-combo-toggle="${esc(o.id)}" aria-pressed="${n > 0}" ${(!n && lleno) ? 'disabled' : ''}>${esc(o.n)}</button>
+          ${n > 0 ? '<span class="opcion-check" aria-hidden="true">✓</span>' : ''}
+        </div>`
+    }
+
+    // Se puede repetir la misma opción (burgers)
     return `
       <div class="opcion-burger${n > 0 ? ' activa' : ''}">
         <button type="button" class="opcion-nombre" data-combo-mas="${esc(o.id)}" ${lleno ? 'disabled' : ''}>${esc(o.n)}</button>
@@ -489,14 +584,18 @@ function pintarCombo() {
   }).join('')
 
   const btn = $('confirmarCombo')
-  btn.disabled = !lleno
-  btn.textContent = lleno ? 'Agregar al pedido' : `Elegí ${c.cantidad - total} más`
+  btn.disabled = !completo
+  if (completo) {
+    btn.textContent = hayMasPasos ? 'Siguiente: elegir guarnición' : 'Agregar al pedido'
+  } else {
+    btn.textContent = cfg.min === cfg.max ? `Elegí ${cfg.min - total} más` : `Elegí al menos ${cfg.min}`
+  }
 }
 
-function abrirCombo(prod) {
+function abrirCombo(prod, pasos) {
   if (!$('modalCombo')) { agregarLinea(prod.id); return } // por si falta la ventana en el HTML
-  const cfg = COMBOS[prod.id]
-  comboActual = { id: prod.id, cantidad: cfg.cantidad, opciones: opcionesCombo(prod.id), elegidas: {} }
+  const cfg = pasos[0]
+  comboActual = { id: prod.id, pasos, pasoIdx: 0, acumulados: [], cfg, opciones: cfg.opciones(), elegidas: {} }
   history.pushState({ v: 'combo' }, '')
   pintarCombo()
   $('veloCombo').hidden = false
@@ -516,20 +615,48 @@ function cerrarCombo() {
 }
 function confirmarCombo() {
   const c = comboActual
-  if (!c || totalElegidas() !== c.cantidad) return
-  agregarLinea(c.id, detalleCombo())
+  if (!c) return
+  const total = totalElegidas()
+  if (total < c.cfg.min || total > c.cfg.max) return
+  const elegidoAhora = detalleCombo()
+  if (c.pasoIdx < c.pasos.length - 1) {
+    c.acumulados.push(elegidoAhora)
+    c.pasoIdx += 1
+    c.cfg = c.pasos[c.pasoIdx]
+    c.opciones = c.cfg.opciones()
+    c.elegidas = {}
+    pintarCombo()
+    $('comboLista').scrollTop = 0
+    return
+  }
+  const detalleFinal = [...c.acumulados, elegidoAhora].filter(Boolean).join(' · ')
+  agregarLinea(c.id, detalleFinal)
   cerrarCombo()
 }
 
-// La ventana del combo está en el HTML después de los scripts, por eso los clicks se escuchan en todo el documento
+// La ventana está en el HTML después de los scripts, por eso los clicks se escuchan en todo el documento
 document.addEventListener('click', (e) => {
   if (!comboActual) return
   if (e.target.id === 'veloCombo' || e.target.closest('#cerrarCombo')) { cerrarCombo(); return }
   if (e.target.closest('#confirmarCombo')) { confirmarCombo(); return }
 
+  const alternar = e.target.closest('[data-combo-toggle]')
+  if (alternar) {
+    const id = alternar.dataset.comboToggle
+    if (comboActual.elegidas[id]) {
+      delete comboActual.elegidas[id]
+    } else if (comboActual.cfg.max === 1) {
+      comboActual.elegidas = { [id]: 1 }
+    } else if (totalElegidas() < comboActual.cfg.max) {
+      comboActual.elegidas[id] = 1
+    }
+    pintarCombo()
+    return
+  }
+
   const mas = e.target.closest('[data-combo-mas]')
   if (mas) {
-    if (totalElegidas() < comboActual.cantidad) {
+    if (totalElegidas() < comboActual.cfg.max) {
       const id = mas.dataset.comboMas
       comboActual.elegidas[id] = (comboActual.elegidas[id] || 0) + 1
       pintarCombo()
@@ -573,19 +700,37 @@ function cerrarPanel() {
   else cerrarPanelUI()
 }
 
+// Botón "atrás" / "adelante" del navegador: la vista sale de la dirección (#menu-completo) y del estado
 window.addEventListener('popstate', () => {
   const v = history.state && history.state.v
   if (v !== 'panel' && panel.classList.contains('abierto')) cerrarPanelUI()
   if (v !== 'combo' && comboAbierto()) cerrarComboUI()
-  if (v === 'catalogo' && vistaCatalogo.hidden) mostrarCatalogoUI()
-  else if (!['catalogo', 'panel', 'combo'].includes(v) && !vistaCatalogo.hidden) mostrarInicioUI()
+  const enMenu = hashEsMenu()
+  if (enMenu && vistaCatalogo.hidden) mostrarCatalogoUI()
+  else if (!enMenu && !vistaCatalogo.hidden) mostrarInicioUI()
 })
-history.replaceState(null, '')
+
+// Al cargar o refrescar: si la dirección es la del menú, abre el menú (y la categoría que estaba abierta)
+function restaurarVista() {
+  const estado = history.state && history.state.v
+  if (estado === 'panel' || estado === 'combo') {
+    history.replaceState(hashEsMenu() ? { v: 'catalogo' } : null, '')
+  }
+  if (hashEsMenu()) {
+    mostrarCatalogoUI()
+    const cat = location.hash.split('/')[1]
+    const d = cat ? acordeonLista.querySelector(`details[data-slug="${CSS.escape(cat)}"]`) : null
+    if (d) d.open = true
+  }
+  document.documentElement.classList.remove('abrir-menu')
+}
+restaurarVista()
 
 // ====== Eventos: agregar productos y elegir tamaños ======
-// Suma una unidad de un producto (los combos primero abren la ventana de elección)
+// Suma una unidad de un producto (los de elección primero abren la ventana)
 function sumarProducto(prod) {
-  if (COMBOS[prod.id]) { abrirCombo(prod); return }
+  const pasos = obtenerPasosProducto(prod)
+  if (pasos) { abrirCombo(prod, pasos); return }
   agregarLinea(claveProducto(prod))
 }
 
