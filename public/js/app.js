@@ -484,7 +484,7 @@ function lineaHtml(l) {
       <div class="nota-box">
         <label class="nota-lab" for="nota-${l.lid}">¿Querés aclarar algo? (opcional)</label>
         ${chips}
-        <input id="nota-${l.lid}" class="nota-input" data-lid="${l.lid}" type="text" value="${esc(l.nota)}" placeholder="Ej: sin tomate, bien cocido..." maxlength="140" autocomplete="off">
+        <input id="nota-${l.lid}" class="nota-input" data-lid="${l.lid}" type="text" value="${esc(l.nota)}" placeholder="Ej: sin tomate..." maxlength="140" autocomplete="off">
       </div>
     </div>`
 }
