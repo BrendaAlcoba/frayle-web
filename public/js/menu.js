@@ -314,5 +314,20 @@ const MENU = [
   { id: 'salchipapas', n: 'Salchipapas', d: 'Papas fritas con salchichas.', p: 9000, c: 'Papas', e: '', img: '' },
   { id: 'papas-cheddar', n: 'Papas fritas con queso cheddar', d: 'Porción grande de papas fritas con queso cheddar.', p: 10000, c: 'Papas', e: '', img: '' },
   { id: 'papas-salchichas-cheddar', n: 'Papas fritas con salchichas y cheddar', d: 'Papas fritas con salchichas y queso cheddar.', p: 12000, c: 'Papas', e: '', img: '' },
-  { id: 'papas-el-frayle', n: 'Papas fritas El Frayle', d: 'Papas fritas con cheddar, bacon y cebollita de verdeo.', p: 15000, c: 'Papas', e: '', img: '' }
+  { id: 'papas-el-frayle', n: 'Papas fritas El Frayle', d: 'Papas fritas con cheddar, bacon y cebollita de verdeo.', p: 15000, c: 'Papas', e: '', img: '' },
+  {
+    id: 'nuggets',
+    n: 'Nuggets de pollo',
+    d: 'Elegí 10 unidades (no incluyen papas) o mix de 8 unidades + papas. Podés sumar dip de cheddar o barbacoa a $2.000 c/u al agregar.',
+    p: 7000,
+    variantes: [
+      { label: '10 unidades', p: 7000, img: 'nuggets-dips.jpg' },
+      { label: '8 unidades + papas', p: 7000, img: 'nuggets-papas.jpg' }
+    ],
+    conDipPatitas: true,
+    c: 'Papas',
+    e: '',
+    img: 'nuggets-dips.jpg',
+    imgs: ['nuggets-dips.jpg', 'nuggets-papas.jpg']
+  }
 ]

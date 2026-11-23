@@ -50,6 +50,7 @@ const candidatosFoto = (m) => EXTENSIONES_FOTO.map((ext) => rutaImg(carpetaDe(m)
 
 // ====== Aclaraciones rápidas (solo donde tienen sentido) ======
 const CATS_CON_ACLARACION = new Set([
+  'Destacados del mes',
   'Burgers de pan de papa',
   'Hamburguesas',
   'Lomos',
@@ -58,8 +59,9 @@ const CATS_CON_ACLARACION = new Set([
 ])
 const ACLARACIONES_RAPIDAS = ['Sin tomate', 'Sin lechuga', 'Sin cebolla', 'Sin condimentos']
 
-// ====== Productos "a elección": el cliente elige en una ventana ======
+// ====== Productos "a elección": el cliente elige en una ventana (puede tener varios pasos) ======
 // min / max = cuántas opciones puede elegir; repetir = si puede elegir la misma más de una vez
+// corto = cómo se llama el paso en el botón "Siguiente: ..."
 const INGREDIENTES_ENSALADA = [
   'Lentejas', 'Porotos', 'Lechuga', 'Tomate', 'Choclo', 'Habas', 'Brócoli', 'Rúcula', 'Palta',
   'Tomate cherry', 'Chauchas', 'Zanahoria', 'Repollo de bruselas', 'Huevo', 'Jamón', 'Queso barra', 'Mozzarella'
@@ -75,6 +77,12 @@ const GUARNICIONES = [
   'Ensalada mezclada'
 ]
 
+// Dips (nuggets: cada dip cuesta extra; promo balde: 1 dip incluido)
+const DIPS_PATITAS = [
+  { id: 'dip-cheddar', n: 'Dip cheddar', extra: 2000 },
+  { id: 'dip-barbacoa', n: 'Dip barbacoa', extra: 2000 }
+]
+
 // La lista toma todas las burgers que tienen tamaños (simple/doble/triple/cuádruple) + las ids extra
 const burgersElegibles = (extra = []) =>
   MENU
@@ -83,6 +91,46 @@ const burgersElegibles = (extra = []) =>
       ((Array.isArray(m.variantes) && m.variantes.length > 0) || extra.includes(m.id)))
     .map((m) => ({ id: m.id, n: m.n }))
 
+// Pasos sueltos que se combinan según el producto
+const PASO_MILANESA = {
+  min: 1, max: 1, repetir: false, separador: ', ', rotulo: 'Elección', corto: 'tipo de milanesa',
+  titulo: 'Elegí de qué querés la milanesa',
+  sub: 'Seleccioná una opción (Carne o Pollo).',
+  opciones: () => TIPOS_MILANESA.map((n) => ({ id: n, n }))
+}
+
+const PASO_GUARNICION = {
+  min: 1, max: 1, repetir: false, separador: ', ', rotulo: 'Guarnición', corto: 'guarnición',
+  titulo: 'Elegí tu guarnición',
+  sub: 'Seleccioná una opción incluida con tu plato.',
+  opciones: () => GUARNICIONES.map((n) => ({ id: n, n }))
+}
+
+const PASO_QUIERE_DIP = {
+  min: 1, max: 1, repetir: false, separador: ', ', rotulo: 'Dip', corto: 'dips',
+  titulo: '¿Querés sumar dip?',
+  sub: 'Los nuggets no incluyen dip. Cada dip sale $2.000.',
+  opciones: () => [
+    { id: 'no', n: 'No, sin dip' },
+    { id: 'si', n: 'Sí, elegir dip ($2.000 c/u)' }
+  ]
+}
+
+const PASO_ELEGIR_DIPS = {
+  min: 1, max: 6, repetir: true, separador: ' + ', rotulo: 'Dips', corto: 'dips',
+  titulo: 'Elegí tus dips ($2.000 c/u)',
+  sub: 'Tocá + para sumar dips de cheddar o barbacoa.',
+  opciones: () => DIPS_PATITAS.map((d) => ({ id: d.id, n: `${d.n} (+${peso(d.extra)})`, corto: d.n }))
+}
+
+const PASO_DIP_INCLUIDO = {
+  min: 1, max: 1, repetir: false, separador: ', ', rotulo: 'Dip', corto: 'dip',
+  titulo: 'Elegí tu dip',
+  sub: 'La promo incluye 1 dip: cheddar o barbacoa.',
+  opciones: () => DIPS_PATITAS.map((d) => ({ id: d.id, n: d.n }))
+}
+
+// Productos que se eligen en un solo paso (o el primero de varios)
 const COMBOS = {
   'promo-balde': {
     min: 4, max: 4, repetir: true, separador: ' + ', rotulo: 'Elegidas',
@@ -110,22 +158,14 @@ const COMBOS = {
   }
 }
 
-const PASO_MILANESA = {
-  min: 1, max: 1, repetir: false, separador: ', ', rotulo: 'Elección',
-  titulo: 'Elegí de qué querés la milanesa',
-  sub: 'Seleccioná una opción (Carne o Pollo).',
-  opciones: () => TIPOS_MILANESA.map((n) => ({ id: n, n }))
-}
-
-const PASO_GUARNICION = {
-  min: 1, max: 1, repetir: false, separador: ', ', rotulo: 'Guarnición',
-  titulo: 'Elegí tu guarnición',
-  sub: 'Seleccioná una opción incluida con tu plato.',
-  opciones: () => GUARNICIONES.map((n) => ({ id: n, n }))
+// Pasos que vienen DESPUÉS del primero en algunos combos
+const PASOS_EXTRA = {
+  'promo-balde': [PASO_DIP_INCLUIDO]
 }
 
 function obtenerPasosProducto(prod) {
-  if (COMBOS[prod.id]) return [COMBOS[prod.id]]
+  if (COMBOS[prod.id]) return [COMBOS[prod.id], ...(PASOS_EXTRA[prod.id] || [])]
+  if (prod.conDipPatitas) return [PASO_QUIERE_DIP]
   const pasos = []
   if (prod.tipoMilanesa) pasos.push(PASO_MILANESA)
   if (prod.conGuarnicion) pasos.push(PASO_GUARNICION)
@@ -314,9 +354,10 @@ document.querySelectorAll('nav a[href^="#"]').forEach((a) => a.addEventListener(
 }))
 
 // ====== Carrito ======
-// Cada línea: { lid, k, q, nota, detalle }
+// Cada línea: { lid, k, q, nota, detalle, precioUnitario? }
 // k = id del producto (o id__variante), nota = aclaración del cliente,
-// detalle = lo que eligió en una ventana de elección (por ejemplo "Burger J&Q + Burger Frayle")
+// detalle = lo que eligió en una ventana de elección (por ejemplo "Pollo · Puré de papas"),
+// precioUnitario = solo cuando el precio cambia por lo elegido (por ejemplo, dips extra)
 const CLAVE = 'frayle-pedido-v2'
 let carro = []
 try {
@@ -342,8 +383,13 @@ function infoLinea(k) {
 }
 
 const lineas = () => carro
-  .map((l) => ({ ...l, ...(infoLinea(l.k) || {}) }))
-  .filter((l) => l.n)
+  .map((l) => {
+    const base = infoLinea(l.k)
+    if (!base || !base.n) return null
+    const p = typeof l.precioUnitario === 'number' ? l.precioUnitario : base.p
+    return { ...base, ...l, p }
+  })
+  .filter(Boolean)
 
 const importeTotal = (ls) => ls.reduce((s, l) => s + l.p * l.q, 0)
 
@@ -356,12 +402,21 @@ const contador = $('contador')
 const modoActual = () => (document.querySelector('input[name="modo"]:checked') || {}).value || 'Retiro en el local'
 const esEnvio = () => modoActual().startsWith('Envío')
 
-function agregarLinea(k, detalle = '') {
-  // Si ya hay una línea igual (mismo producto, misma elección) SIN aclaración, suma una unidad.
+function agregarLinea(k, detalle = '', precioUnitario = null) {
+  // Si ya hay una línea igual (mismo producto, misma elección, mismo precio) SIN aclaración, suma una unidad.
   // Si la que está tiene aclaración, crea una línea nueva (así se pueden pedir distintas).
-  const existente = carro.find((l) => l.k === k && (l.detalle || '') === detalle && !l.nota)
-  if (existente) existente.q += 1
-  else carro.push({ lid: siguienteLid++, k, q: 1, nota: '', detalle })
+  const existente = carro.find((l) =>
+    l.k === k &&
+    (l.detalle || '') === detalle &&
+    (l.precioUnitario ?? null) === precioUnitario &&
+    !l.nota)
+  if (existente) {
+    existente.q += 1
+  } else {
+    const linea = { lid: siguienteLid++, k, q: 1, nota: '', detalle }
+    if (precioUnitario !== null) linea.precioUnitario = precioUnitario
+    carro.push(linea)
+  }
   guardar()
   pintarCarro(true)
 }
@@ -527,7 +582,7 @@ function pintarCarro(animar = false) {
   }
 }
 
-// ====== Ventana de elección (combos de burgers, ensalada a medida, milanesas y guarniciones) ======
+// ====== Ventana de elección (combos, ensalada a medida, milanesas, guarniciones, dips) ======
 let comboActual = null // { id, pasos, pasoIdx, acumulados, cfg, opciones, elegidas: { idOpcion: cantidad } }
 
 const comboAbierto = () => {
@@ -540,13 +595,22 @@ const totalElegidas = () =>
 function detallePaso(cfg, opciones, elegidas) {
   return opciones
     .filter((o) => elegidas[o.id] > 0)
-    .map((o) => (elegidas[o.id] > 1 ? `${elegidas[o.id]} x ${o.n}` : o.n))
+    .map((o) => {
+      const nombre = o.corto || o.n
+      return elegidas[o.id] > 1 ? `${elegidas[o.id]} x ${nombre}` : nombre
+    })
     .join(cfg.separador)
 }
 
 function detalleCombo() {
   const c = comboActual
   return detallePaso(c.cfg, c.opciones, c.elegidas)
+}
+
+// Qué paso viene después (null si el actual es el último)
+function proximoPaso(c) {
+  if (c.cfg === PASO_QUIERE_DIP) return c.elegidas.si ? PASO_ELEGIR_DIPS : null
+  return c.pasos[c.pasoIdx + 1] || null
 }
 
 function pintarCombo() {
@@ -556,7 +620,7 @@ function pintarCombo() {
   const total = totalElegidas()
   const lleno = total >= cfg.max
   const completo = total >= cfg.min && total <= cfg.max
-  const hayMasPasos = c.pasoIdx < c.pasos.length - 1
+  const siguiente = proximoPaso(c)
   const prefijoPaso = c.pasos.length > 1 ? `Paso ${c.pasoIdx + 1} de ${c.pasos.length} · ` : ''
 
   $('comboTitulo').textContent = `${prefijoPaso}${cfg.titulo}`
@@ -568,7 +632,7 @@ function pintarCombo() {
   $('comboLista').innerHTML = c.opciones.map((o) => {
     const n = c.elegidas[o.id] || 0
 
-    // Se elige o se saca con un toque (ingredientes, carne/pollo, guarnición)
+    // Se elige o se saca con un toque (ingredientes, carne/pollo, guarnición, dip)
     if (!cfg.repetir) {
       return `
         <div class="opcion-burger${n > 0 ? ' activa' : ''}">
@@ -577,15 +641,15 @@ function pintarCombo() {
         </div>`
     }
 
-    // Se puede repetir la misma opción (burgers)
+    // Se puede repetir la misma opción (burgers, dips)
     return `
       <div class="opcion-burger${n > 0 ? ' activa' : ''}">
         <button type="button" class="opcion-nombre" data-combo-mas="${esc(o.id)}" ${lleno ? 'disabled' : ''}>${esc(o.n)}</button>
         ${n > 0 ? `
           <div class="opcion-ctrl">
-            <button type="button" class="opcion-btn" data-combo-menos="${esc(o.id)}" aria-label="Quitar una ${esc(o.n)}">−</button>
+            <button type="button" class="opcion-btn" data-combo-menos="${esc(o.id)}" aria-label="Quitar uno">−</button>
             <span class="opcion-n">${n}</span>
-            <button type="button" class="opcion-btn" data-combo-mas="${esc(o.id)}" aria-label="Agregar otra ${esc(o.n)}" ${lleno ? 'disabled' : ''}>+</button>
+            <button type="button" class="opcion-btn" data-combo-mas="${esc(o.id)}" aria-label="Agregar otro" ${lleno ? 'disabled' : ''}>+</button>
           </div>` : ''}
       </div>`
   }).join('')
@@ -593,14 +657,14 @@ function pintarCombo() {
   const btn = $('confirmarCombo')
   btn.disabled = !completo
   if (completo) {
-    btn.textContent = hayMasPasos ? 'Siguiente: elegir guarnición' : 'Agregar al pedido'
+    btn.textContent = siguiente ? `Siguiente: ${siguiente.corto}` : 'Agregar al pedido'
   } else {
     btn.textContent = cfg.min === cfg.max ? `Elegí ${cfg.min - total} más` : `Elegí al menos ${cfg.min}`
   }
 }
 
 function abrirCombo(prod, pasos) {
-  if (!$('modalCombo')) { agregarLinea(prod.id); return } // por si falta la ventana en el HTML
+  if (!$('modalCombo')) { agregarLinea(claveProducto(prod)); return } // por si falta la ventana en el HTML
   const cfg = pasos[0]
   comboActual = { id: prod.id, pasos, pasoIdx: 0, acumulados: [], cfg, opciones: cfg.opciones(), elegidas: {} }
   history.pushState({ v: 'combo' }, '')
@@ -620,24 +684,49 @@ function cerrarCombo() {
   if (history.state && history.state.v === 'combo') history.back()
   else cerrarComboUI()
 }
+
 function confirmarCombo() {
   const c = comboActual
   if (!c) return
   const total = totalElegidas()
   if (total < c.cfg.min || total > c.cfg.max) return
-  const elegidoAhora = detalleCombo()
-  if (c.pasoIdx < c.pasos.length - 1) {
-    c.acumulados.push(elegidoAhora)
-    c.pasoIdx += 1
-    c.cfg = c.pasos[c.pasoIdx]
-    c.opciones = c.cfg.opciones()
+
+  // Lo que eligió en este paso (si dijo "Sí, quiero dip" no hace falta anotarlo: se verán los dips)
+  const eligio = c.cfg === PASO_QUIERE_DIP
+    ? (c.elegidas.si ? '' : 'Sin dip')
+    : detalleCombo()
+  const siguiente = proximoPaso(c)
+
+  // Hay otro paso: se guarda lo elegido y se muestra el siguiente
+  if (siguiente) {
+    if (eligio) c.acumulados.push(eligio)
+    if (!c.pasos.includes(siguiente)) c.pasos = [...c.pasos, siguiente]
+    c.pasoIdx = c.pasos.indexOf(siguiente)
+    c.cfg = siguiente
+    c.opciones = siguiente.opciones()
     c.elegidas = {}
     pintarCombo()
     $('comboLista').scrollTop = 0
     return
   }
-  const detalleFinal = [...c.acumulados, elegidoAhora].filter(Boolean).join(' · ')
-  agregarLinea(c.id, detalleFinal)
+
+  // Último paso: se agrega al pedido
+  const prod = MENU.find((x) => x.id === c.id)
+  const claveBase = prod ? claveProducto(prod) : c.id
+  const detalleFinal = [...c.acumulados, eligio].filter(Boolean).join(' · ')
+
+  // Los dips extra de los nuggets suman al precio de esa línea
+  let precioUnitario = null
+  if (prod && c.cfg === PASO_ELEGIR_DIPS) {
+    const extra = Object.entries(c.elegidas).reduce((suma, [idDip, cant]) => {
+      const dip = DIPS_PATITAS.find((d) => d.id === idDip)
+      return suma + (dip ? dip.extra * cant : 0)
+    }, 0)
+    precioUnitario = precioActual(prod) + extra
+  }
+
+  comboActual = null // evita que un doble toque agregue el producto dos veces
+  agregarLinea(claveBase, detalleFinal, precioUnitario)
   cerrarCombo()
 }
 
@@ -653,7 +742,7 @@ document.addEventListener('click', (e) => {
     if (comboActual.elegidas[id]) {
       delete comboActual.elegidas[id]
     } else if (comboActual.cfg.max === 1) {
-      comboActual.elegidas = { [id]: 1 }
+      comboActual.elegidas = { [id]: 1 } // elección única: cambia la opción elegida
     } else if (totalElegidas() < comboActual.cfg.max) {
       comboActual.elegidas[id] = 1
     }
@@ -748,18 +837,46 @@ function manejarClickCatalogo(e) {
     const idx = Number(varBtn.dataset.varIdx)
     seleccionVariante[id] = idx
     const prod = MENU.find((x) => x.id === id)
+
     document.querySelectorAll(`[data-var-id="${CSS.escape(id)}"]`).forEach((b) => {
       b.setAttribute('aria-pressed', String(Number(b.dataset.varIdx) === idx))
     })
+
     if (prod) {
       document.querySelectorAll(`[data-precio-id="${CSS.escape(id)}"]`).forEach((el) => {
         el.textContent = peso(precioActual(prod))
       })
+
+      const varSel = Array.isArray(prod.variantes) ? prod.variantes[idx] : null
+      const archivo = (varSel && varSel.img) || prod.img
+      if (archivo) {
+        const nuevaUrl = rutaImg(carpetaDe(prod), archivo)
+        document.querySelectorAll(`.item[data-id="${CSS.escape(id)}"] .foto`).forEach((cajaFoto) => {
+          const imgEl = cajaFoto.querySelector('img')
+          if (!imgEl) return
+          cajaFoto.classList.remove('fallo')
+          const onOk = () => {
+            cajaFoto.classList.remove('fallo')
+            cajaFoto.classList.add('cargada')
+            imgEl.removeEventListener('load', onOk)
+            imgEl.removeEventListener('error', onErr)
+          }
+          const onErr = () => {
+            cajaFoto.classList.remove('cargada')
+            cajaFoto.classList.add('fallo')
+            imgEl.removeEventListener('load', onOk)
+            imgEl.removeEventListener('error', onErr)
+          }
+          imgEl.addEventListener('load', onOk)
+          imgEl.addEventListener('error', onErr)
+          imgEl.src = nuevaUrl
+        })
+      }
     }
+
     actualizarControlesProductos() // el contador muestra la cantidad del tamaño elegido
     return
   }
-
   const btn = e.target.closest('[data-agregar], [data-prod-mas], [data-prod-menos]')
   if (!btn) return
   const id = btn.dataset.agregar || btn.dataset.prodMas || btn.dataset.prodMenos
