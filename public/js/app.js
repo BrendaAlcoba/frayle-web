@@ -25,6 +25,7 @@ const slug = (s) =>
 // ====== Fotos: carpetas dentro de public/img ======
 // Cada categoría tiene su carpeta. Si agregás una categoría nueva, sumá su carpeta acá.
 const CARPETAS = {
+  'Destacados del mes': 'Destacados',
   'Promos': 'promos',
   'Burgers de pan de papa': 'burgers',
   'Hamburguesas': 'hamburguesas',
@@ -83,6 +84,12 @@ const burgersElegibles = (extra = []) =>
     .map((m) => ({ id: m.id, n: m.n }))
 
 const COMBOS = {
+  'promo-balde': {
+    min: 4, max: 4, repetir: true, separador: ' + ', rotulo: 'Elegidas',
+    titulo: 'Elegí 4 mini burgers',
+    sub: 'Burgers de pan de papa: tocá + para sumar (podés repetir o variar).',
+    opciones: () => burgersElegibles(['burger-clasica'])
+  },
   'combo-2-burgers-simples': {
     min: 2, max: 2, repetir: true, separador: ' + ', rotulo: 'Elegidas',
     titulo: 'Elegí 2 burgers',

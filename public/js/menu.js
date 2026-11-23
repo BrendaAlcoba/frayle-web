@@ -11,6 +11,7 @@ const SIN_FOTO = new Set([
 ])
 
 const FONDOS_CAT = {
+  'Destacados del mes': 'destacados-del-mes.jpg',
   'Promos': 'fondo-promos.jpg',
   'Burgers de pan de papa': 'fondo-burgers.jpg',
   'Hamburguesas': 'fondo-hamburguesas.jpg',
@@ -23,6 +24,10 @@ const FONDOS_CAT = {
 }
 
 const MENU = [
+  //DESTACADOS DEL MES
+  { id: 'destacado1', n: 'Promo post festival', d: 'Mini lomo + papas + lata de gaseosa. Pan, carne, queso barra, mayo, tomate, lechuga y salsa de tomate. Elegí tu pan favorito', p: 10000, c: 'Destacados del mes', e: '', img: 'mini-lomo-lata-coca.jpg' },
+  { id: 'destacado2', n: '2 Cheese burgers con papas y lata de gaseosa', d: 'Pan de papa, medallón de carne, doble feta de cheddar, mayonesa y verduras', p: 18000, c: 'Destacados del mes', e: '', img: 'chese-burgers.jpg' },
+
   // --- PROMOS (solo texto) ---
   { id: 'promo-1', n: 'Promo 1', d: '2 lomos de campo + porción de papas.', p: 24000, c: 'Promos', e: '', img: '' },
   { id: 'promo-2', n: 'Promo 2', d: '2 lomos completos + porción de papas.', p: 38000, c: 'Promos', e: '', img: '' },
@@ -35,7 +40,9 @@ const MENU = [
   { id: 'promo-9', n: 'Promo 9', d: '1 pizza mozzarella + 1 pizza especial + porción de papas.', p: 32000, c: 'Promos', e: '', img: '' },
   { id: 'promo-10', n: 'Promo 10', d: '2 pizzas especiales + porción de papas.', p: 35000, c: 'Promos', e: '', img: '' },
   { id: 'promo-mini-lomo-papas', n: 'Mini lomo + porción de papas', d: 'Mini lomo + porción de papas.', p: 13000, c: 'Promos', e: '', img: '' },
-  { id: 'promo-2-pizzas-mozzarella', n: '2 pizzas mozzarellas', d: '2 pizzas mozzarellas (8 porciones cada una).', p: 17000, c: 'Promos', e: '', img: '' },
+  { id: 'promo-2-pizzas-mozzarella', n: '2 pizzas mozzarella', d: '2 pizzas mozzarella (8 porciones cada una).', p: 17000, c: 'Promos', e: '', img: '' },
+  { id: 'promo-balde', n: 'Promo balde', d: '4 mini burgers en pan de papa, variedad a elección + porción de papas + dip de cheddar o barbacoa.', p: 21000, c: 'Promos', e: '', img: 'balde.jpg' },
+  
 
   // --- BURGERS DE PAN DE PAPA (con fotos) ---
   { id: 'burger-clasica', n: 'Burger clásica', d: 'Pan de papa, medallón de carne casero, tomate, lechuga y todos los aderezos.', p: 7000, c: 'Burgers de pan de papa', e: '🍔', img: 'burger-clasica.jpg' },
@@ -189,7 +196,7 @@ const MENU = [
   { id: 'super-hamb-pizza', n: 'Súper hamburguesa pizza (5 pers.)', d: 'Dos bases de pizzas caseras, una gratinada con mozzarella, doble hamburguesa de carne casera, jamón, queso, huevo, tomate, lechuga, salsa de tomate y todos los condimentos.', p: 45000, c: 'Hamburguesas', e: '', img: '' },
 
   // --- VIANDAS (con fotos) ---
-  { id: 'vianda-arroz-con-pollo', n: 'Arroz con pollo', d: 'Vianda del día de arroz con pollo. Consultá disponibilidad y precio.', p: 0, c: 'Viandas', e: '🍚', img: 'ArrozConPollo.jpg' },
+  { id: 'vianda-arroz-con-pollo', n: 'Arroz con pollo', d: 'Vianda del día de arroz con pollo. Consultá disponibilidad', p: 8000, c: 'Viandas', e: '🍚', img: 'ArrozConPollo.jpg' },
   {
     id: 'vianda-canelones',
     n: 'Canelones',
@@ -219,7 +226,7 @@ const MENU = [
   },
   { id: 'vianda-milanesa-con-guarnicion', n: 'Milanesa con guarnición', d: 'Milanesa de carne o pollo con guarnición (papas fritas, verduras asadas, puré de papas, pasta con pesto o ensalada mezclada).', p: 9500, c: 'Viandas', e: '🍽️', img: 'MilanesaConGuarnición.jpg', tipoMilanesa: true, conGuarnicion: true },
   { id: 'vianda-noquis', n: 'Ñoquis', d: 'Vianda de ñoquis caseros.', p: 8000, c: 'Viandas', e: '🍝', img: 'ñoquis.jpg' },
-  { id: 'vianda-pan-de-carne', n: 'Pan de carne', d: 'Vianda de pan de carne. Consultá disponibilidad y precio.', p: 0, c: 'Viandas', e: '🍖', img: 'PanDeCarne.jpg' },
+  { id: 'vianda-tallarines-con-albondigas', n: 'Tallarines con albóndigas', d: 'Menú del día. Consultá disponibilidad', p: 10000, c: 'Viandas', e: '🍖', img: 'tallarines-con-albondigas.jpg' },
   { id: 'vianda-sorrentinos', n: 'Sorrentinos', d: 'Sorrentinos J/Q (pasta rellena x8 unidades).', p: 9000, c: 'Viandas', e: '🍝', img: 'sorrentinos.jpg' },
   {
     id: 'vianda-tallarines',
@@ -234,9 +241,11 @@ const MENU = [
     e: '🍝',
     img: 'Tallarines.jpg'
   },
-  { id: 'vianda-pastel-de-papa', n: 'Pastel de papa', d: 'Vianda de pastel de papa. Consultá disponibilidad y precio.', p: 0, c: 'Viandas', e: '🍝', img: 'PastelDePapa.jpeg' },
-  { id: 'vianda-pata-muslo', n: 'Pata muslo', d: 'Vianda de pata muslo. Consultá disponibilidad y precio.', p: 0, c: 'Viandas', e: '🍗', img: 'PataMuslo.jpg' },
+  { id: 'vianda-pastel-de-papa', n: 'Pastel de papa', d: 'Vianda de pastel de papa. Consultá disponibilidad.', p: 8000, c: 'Viandas', e: '🍝', img: 'PastelDePapa.jpeg' },
+  { id: 'vianda-pata-muslo', n: 'Pata muslo', d: 'Vianda de pata muslo más guarnición. Consultá disponibilidad.', p: 8000, c: 'Viandas', e: '🍗', img: 'PataMuslo.jpg' },
   { id: 'vianda-ravioles', n: 'Ravioles', d: 'Vianda de ravioles caseros.', p: 8500, c: 'Viandas', e: '🍝', img: 'Ravioles.jpg' },
+  { id: 'vianda-matambre-a-la-pizza', n: 'Matambre a la pizza más guarnición', d: 'Consultá disponibilidad.', p: 12000, c: 'Viandas', e: '🍝', img: 'matambre-a-la-pizza.jpg' },
+  { id: 'vianda-albondigas-con-pure', n: 'Albóndigas con puré', d: 'Menú del día. Consultá disponibilidad.', p: 8000, c: 'Viandas', e: '', img: '' },
 
   // --- milanesas, tartas, minutas y ensaladas ---
   // Sin foto por ahora: al subir public/img/viandas/<id>.jpg aparece sola.
@@ -251,10 +260,11 @@ const MENU = [
   { id: 'vianda-filete-merluza-limon', n: 'Filete de merluza al limón', d: 'Minuta.', p: 9000, c: 'Viandas', e: '', img: '' },
   { id: 'vianda-sandwich-milanesa', n: 'Sándwich de milanesa', d: 'Minuta.', p: 8000, c: 'Viandas', e: '', img: '' },
   { id: 'vianda-arroz-con-atun', n: 'Arroz con atún', d: 'Arroz blanco, atún, maíz, guisantes, tomate y huevo.', p: 7000, c: 'Viandas', e: '', img: '' },
-  { id: 'vianda-arma-tu-ensalada', n: 'Armá tu ensalada', d: 'Incluye hasta 6 ingredientes a elección: lentejas, porotos, lechuga, tomate, choclo, habas, brócoli, rúcula, palta, tomate cherry, chauchas, zanahoria, repollo de bruselas, huevo, jamón, queso barra y mozzarella.', p: 5000, c: 'Viandas', e: '', img: '' },
+  { id: 'vianda-arma-tu-ensalada', n: 'Armá tu ensalada', d: 'Incluye hasta 6 ingredientes a elección: lentejas, porotos, lechuga, tomate, choclo, habas, brócoli, rúcula, palta, tomate cherry, chauchas, zanahoria, repollo de bruselas, huevo, jamón, queso barra y mozzarella.', p: 7000, c: 'Viandas', e: '', img: '' },
   { id: 'vianda-adicional-pollo', n: 'Adicional: pollo grillé', d: 'Para sumar a tu ensalada.', p: 3000, c: 'Viandas', e: '', img: '' },
   { id: 'vianda-adicional-atun', n: 'Adicional: atún', d: 'Para sumar a tu ensalada.', p: 3000, c: 'Viandas', e: '', img: '' },
   { id: 'vianda-adicional-bife-lomo', n: 'Adicional: bife de lomo', d: 'Para sumar a tu ensalada.', p: 5000, c: 'Viandas', e: '', img: '' },
+  
 
   // --- LOMOS (solo texto) ---
   { id: 'mini-lomo-completo', n: 'Mini lomo completo', d: 'Lomo completo en formato mini.', p: 13000, c: 'Lomos', e: '', img: '' },
