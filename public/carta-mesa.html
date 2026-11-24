@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#34080c">
+  <title>Carta de mesa · Frayle Sandwichs</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍔</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-top: #5e1116;
+      --bg-mid: #34080c;
+      --bg-bot: #160406;
+      --surface: rgba(18, 6, 8, 0.9);
+      --card: rgba(46, 11, 15, 0.72);
+      --text: #f3efe6;
+      --muted: #d8cfc2;
+      --gold: #e3b862;
+      --gold-bright: #f0c975;
+      --gold-deep: #b88735;
+      --line: rgba(243, 239, 230, 0.16);
+      --line-soft: rgba(243, 239, 230, 0.09);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 28px 16px 56px;
+      background: linear-gradient(165deg, var(--bg-top) 0%, var(--bg-mid) 52%, var(--bg-bot) 100%);
+      background-attachment: fixed;
+      color: var(--text);
+      font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--gold-bright);
+      outline-offset: 2px;
+    }
+
+    .sheet {
+      max-width: 720px;
+      margin: 0 auto;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 28px 22px 36px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+    }
+
+    @media (min-width: 600px) {
+      body {
+        padding: 40px 20px 64px;
+      }
+
+      .sheet {
+        padding: 38px 36px 44px;
+      }
+    }
+
+    .head {
+      text-align: center;
+      padding-bottom: 22px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .logo-ring {
+      width: 116px;
+      height: 116px;
+      margin: 0 auto 14px;
+      border-radius: 50%;
+      padding: 3px;
+      background: linear-gradient(145deg, var(--gold-bright), var(--gold-deep));
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.55);
+      overflow: hidden;
+    }
+
+    .logo-ring.sin-logo {
+      display: none;
+    }
+
+    .logo-ring img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+      background: #0b0b0b;
+    }
+
+    .since {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: 'Alfa Slab One', Georgia, serif;
+      font-weight: 400;
+      font-size: clamp(1.9rem, 6vw, 2.7rem);
+      letter-spacing: 0.04em;
+      color: var(--text);
+    }
+
+    .sub {
+      margin: 8px 0 0;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .nav-cats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 30px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--line-soft);
+    }
+
+    .nav-cats a {
+      text-decoration: none;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--muted);
+      background: var(--card);
+      border: 1px solid var(--line);
+      padding: 6px 12px;
+      border-radius: 999px;
+      transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+    }
+
+    .nav-cats a:hover,
+    .nav-cats a:focus-visible {
+      color: var(--text);
+      background: rgba(120, 20, 28, 0.7);
+      border-color: var(--gold);
+    }
+
+    .cat-block {
+      margin-bottom: 34px;
+      scroll-margin-top: 20px;
+    }
+
+    .cat-block:last-of-type {
+      margin-bottom: 0;
+    }
+
+    .cat-title {
+      margin: 0 0 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--line);
+      font-family: 'Alfa Slab One', Georgia, serif;
+      font-weight: 400;
+      font-size: 1.25rem;
+      letter-spacing: 0.03em;
+      color: var(--gold);
+    }
+
+    .dish-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .dish {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 12px 2px;
+      border-bottom: 1px dashed var(--line-soft);
+    }
+
+    .dish:last-child {
+      border-bottom: none;
+    }
+
+    .dish-info {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .dish-name {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .dish-desc {
+      margin: 4px 0 0;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .dish-price-col {
+      flex: 0 0 auto;
+      text-align: right;
+      max-width: 44%;
+    }
+
+    .dish-price {
+      font-size: 0.96rem;
+      font-weight: 700;
+      color: var(--gold);
+      white-space: nowrap;
+    }
+
+    .dish-variants {
+      margin-top: 3px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .empty-msg {
+      text-align: center;
+      color: var(--muted);
+      padding: 24px 12px;
+      font-size: 0.92rem;
+    }
+
+    .foot {
+      margin-top: 34px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .foot p {
+      margin: 4px 0;
+    }
+
+    .foot strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .top-link {
+      display: inline-block;
+      margin-top: 12px;
+      color: var(--gold);
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .top-link:hover,
+    .top-link:focus-visible {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body id="top">
+  <main class="sheet">
+    <header class="head">
+      <div class="logo-ring" id="logoRing">
+        <img
+          src="/img/logo-frayle.jpg"
+          alt="Logo Frayle Sandwichs"
+          onerror="document.getElementById('logoRing').classList.add('sin-logo')"
+        >
+      </div>
+      <span class="since">Desde 2014</span>
+      <h1>Frayle Sandwichs</h1>
+      <p class="sub">Rivadavia 697 esq. Mitre · Fray Luis Beltrán, Mendoza</p>
+    </header>
+
+    <nav class="nav-cats" id="navCats" aria-label="Categorías del menú"></nav>
+    <div id="cartaContenido"></div>
+
+    <footer class="foot">
+      <p><strong>Frayle Sandwichs</strong> · Viandas y comidas rápidas</p>
+      <p>Consultá por opciones del día y disponibilidad con quien te atiende.</p>
+      <a class="top-link" href="#top">Volver arriba</a>
+    </footer>
+  </main>
+
+  <script src="/js/menu.js"></script>
+  <script>
+    (() => {
+      const peso = (n) => (Number(n) > 0 ? '$' + Number(n).toLocaleString('es-AR') : 'A consultar')
+
+      const esc = (s) =>
+        String(s ?? '').replace(/[&<>"']/g, (c) =>
+          ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]))
+
+      const slug = (s) =>
+        String(s ?? '')
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-+|-+$/g, '')
+
+      function renderPrecio(m) {
+        if (Array.isArray(m.variantes) && m.variantes.length > 0) {
+          const principal = peso(m.variantes[0].p)
+          const detalleVars = m.variantes.map((v) => `${v.label}: ${peso(v.p)}`).join(' · ')
+          return `
+            <div class="dish-price">Desde ${esc(principal)}</div>
+            <div class="dish-variants">${esc(detalleVars)}</div>
+          `
+        }
+        return `<div class="dish-price">${esc(peso(m.p))}</div>`
+      }
+
+      const navEl = document.getElementById('navCats')
+      const contEl = document.getElementById('cartaContenido')
+
+      if (!Array.isArray(typeof MENU !== 'undefined' ? MENU : null)) {
+        contEl.innerHTML = '<p class="empty-msg">No se pudo cargar el menú en este momento.</p>'
+        return
+      }
+
+      const itemsVisibles = MENU.filter((m) => m && m.n && !m.ocultarEnMesa)
+      if (!itemsVisibles.length) {
+        contEl.innerHTML = '<p class="empty-msg">No hay platos disponibles para mostrar.</p>'
+        return
+      }
+
+      const categorias = [...new Set(itemsVisibles.map((m) => m.c).filter(Boolean))]
+
+      navEl.innerHTML = categorias
+        .map((cat) => `<a href="#cat-${esc(slug(cat))}">${esc(cat)}</a>`)
+        .join('')
+
+      contEl.innerHTML = categorias
+        .map((cat) => {
+          const platos = itemsVisibles.filter((m) => m.c === cat)
+          return `
+            <section class="cat-block" id="cat-${esc(slug(cat))}">
+              <h2 class="cat-title">${esc(cat)}</h2>
+              <div class="dish-list">
+                ${platos.map((m) => `
+                  <article class="dish">
+                    <div class="dish-info">
+                      <h3 class="dish-name">${esc(m.n)}</h3>
+                      ${m.d ? `<p class="dish-desc">${esc(m.d)}</p>` : ''}
+                    </div>
+                    <div class="dish-price-col">
+                      ${renderPrecio(m)}
+                    </div>
+                  </article>
+                `).join('')}
+              </div>
+            </section>
+          `
+        })
+        .join('')
+    })()
+  </script>
+</body>
+</html>
